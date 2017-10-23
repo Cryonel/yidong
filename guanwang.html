@@ -769,7 +769,11 @@
 			inner.style.marginLeft = "-1185px";
 			inner.style.transition = "none";
 		}
-		flag = true
+		if(num == 0){
+		    num = 8;
+		    inner.style.marginLeft = "-2360px";
+		    inner.style.transition = "none";
+		}
 	});
 	
 
@@ -827,23 +831,37 @@
     let inner = document.querySelector(".banner-img");
     let prev = document.querySelector(".button");
     let next = document.querySelector(".botton1");
+    let dir = "r";
     let z = 10;
     let now = 0;
+    let flag = true;
     let st = setInterval(move,2000);
     function move(){
-        imgs[now].classList.add("leftOut");
-        pagers[now].classList.remove("active");
-        now++;
-        if(now === imgs.length){
-            now = 0;
-        }
-        imgs[now].classList.add("rightIn");
-        imgs[now].style.zIndex = z++;
-        pagers[now].classList.add("active");
-    }
+        if(dir === "r"){
+            imgs[now].classList.add("leftOut");
+            pagers[now].classList.remove("active");
+            now++;
+            if(now === imgs.length){
+                now = 0;
+			}
+			imgs[now].classList.add("rightIn");
+		}
+		else if(dir = "l"){
+            imgs[now].classList.add("rightOut");
+            pagers[now].classList.remove("active");
+            now--;
+            if(now === -1){
+                now = imgs.length-1;
+			}
+			imgs[now].classList.add("leftIn");
+		}
+		imgs[now].style.zIndex = z++;
+		pagers[now].classList.add("active");
+
     imgs.forEach(function(ele,index){
         ele.addEventListener("animationend",function(){
             imgs[index].classList = "";
+            flag = true;
         })
 
     });
@@ -855,22 +873,39 @@
     };
     pagers.forEach(function(ele,index){
         ele.onclick = function () {
-            if(index > now){
-                imgs[now].classList.add("leftOut");
-                imgs[index].classList.add("rightIn");
-            }else if(index <now){
-                imgs[now].classList.add("rightOut");
-                imgs[index].classList.add("leftIn");
-            }
+            if(flag){
+                if(index > now){
+                    imgs[now].classList.add("leftOut");
+                    imgs[index].classList.add("rightIn");
+            }else if(index <now) {
+                    imgs[now].classList.add("rightOut");
+                    imgs[index].classList.add("leftIn");
+                }
+                imgs[index].style.zIndex = z++;
+                pagers[now].classList.remove("active");
+                pagers[index].classList.add("active");
+                now = index;
 
-            imgs[index].style.zIndex = z++;
-            pagers[now].classList.remove("active");
-            pagers[index].classList.add("active");
-            now = index;
         }
-    })
+        flag = false;
+        }
+    });
 	prev.onclick = function () {
-		
+		dir = "l";
+		if(flag){
+            move();
+            flag = false;
+		}
+    };
+
+	next.onclick = function(){
+	    dir = "r";
+	    if(flag){
+	        move();
+	        flag = false;
+		}
+	};
+
     }
 
 }
